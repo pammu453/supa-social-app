@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import ScreenWrapper from '../../components/ScreenWrapper'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRouter } from 'expo-router'
 import { useFocusEffect } from '@react-navigation/native'
 import { View } from 'react-native'
@@ -20,22 +19,10 @@ let limit = 0
 
 const Home = () => {
     const router = useRouter()
-    const { user, setUser, setToken } = useAuth()
+    const { user } = useAuth()
     const [backPressCount, setBackPressCount] = useState(0);
     const [posts, setPosts] = useState([]);
     const [hasMore, setHasMore] = useState(true);
-
-    const handleLogout = async () => {
-        const { error } = await supabase.auth.signOut()
-        if (error) {
-            Alert.alert(error.message)
-        } else {
-            await AsyncStorage.clear()
-            setUser(null)
-            setToken(null)
-            router.replace("welcome")
-        }
-    }
 
     useFocusEffect(
         React.useCallback(() => {
@@ -132,7 +119,6 @@ const Home = () => {
                     />
                 </View>
             </View>
-            {/* <Button title='Logout' onPress={handleLogout} /> */}
         </ScreenWrapper>
     )
 }

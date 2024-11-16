@@ -14,6 +14,7 @@ import { Image } from 'expo-image'
 import { getAllPosts } from '../../services/postService'
 import PostCard from '../../components/PostCard'
 import { getUserData } from '../../services/userService'
+import Loading from '../../components/Loading'
 
 let limit = 0
 
@@ -22,6 +23,7 @@ const Home = () => {
     const { user, setUser, setToken } = useAuth()
     const [backPressCount, setBackPressCount] = useState(0);
     const [posts, setPosts] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
 
     const handleLogout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -53,9 +55,12 @@ const Home = () => {
     )
 
     const fetchPosts = async () => {
-        limit = limit + 10
+        if (!hasMore) return null
+        limit = limit + 5
+        console.log("Fetched posts", limit)
         const res = await getAllPosts(limit)
         if (res.success) {
+            if (posts.length === res.data.length) setHasMore(false)
             setPosts(res.data)
         } else {
             Alert.alert(res.error)
@@ -81,7 +86,7 @@ const Home = () => {
             .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, handlePostEnent)
             .subscribe()
 
-        fetchPosts()
+        // fetchPosts()
 
         return () => {
             supabase.removeChannel(supabaseChanel)
@@ -114,6 +119,16 @@ const Home = () => {
                         data={posts}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => <PostCard item={item} />}
+                        onEndReached={() => {
+                            fetchPosts()
+                            console.log("end")
+                        }}
+                        onEndReachedThreshold={0}
+                        ListFooterComponent={(
+                            <View style={{ marginBottom: 60 }}>
+                                {hasMore ? <Loading /> : null}
+                            </View>
+                        )}
                     />
                 </View>
             </View>

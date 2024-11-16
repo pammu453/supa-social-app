@@ -1,5 +1,5 @@
-import { Alert, StyleSheet, Text, BackHandler, ToastAndroid, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import { Alert, StyleSheet, Text, BackHandler, ToastAndroid, TouchableOpacity, FlatList } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import ScreenWrapper from '../../components/ScreenWrapper'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
@@ -11,11 +11,16 @@ import { hp, wp } from '../../helpers/commen'
 import { theme } from '../../constants/theme'
 import Icon from '../../assets/icons'
 import { Image } from 'expo-image'
+import { getAllPosts } from '../../services/postService'
+import PostCard from '../../components/PostCard'
+
+let limit = 0
 
 const Home = () => {
     const router = useRouter()
     const { user, setUser, setToken } = useAuth()
     const [backPressCount, setBackPressCount] = useState(0);
+    const [posts, setPosts] = useState([]);
 
     const handleLogout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -46,6 +51,19 @@ const Home = () => {
         }, [backPressCount])
     )
 
+    useEffect(() => {
+        const fetchPosts = async () => {
+            limit = limit + 10
+            const res = await getAllPosts(limit)
+            if (res.success) {
+                setPosts(res.data)
+            } else {
+                Alert.alert(res.error)
+            }
+        }
+        fetchPosts()
+    }, [])
+
     return (
         <ScreenWrapper>
             <View style={styles.container}>
@@ -67,6 +85,13 @@ const Home = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <View style={styles.postCard}>
+                    <FlatList
+                        data={posts}
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item }) => <PostCard item={item} />}
+                    />
+                </View>
             </View>
             {/* <Button title='Logout' onPress={handleLogout} /> */}
         </ScreenWrapper>
@@ -81,12 +106,9 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: "row",
-        // alignItems:"center",
         justifyContent: "space-between",
         marginBottom: 10,
         marginHorizontal: wp(4),
-        // borderWidth: 2,
-        // borderColor: "red"
     },
     title: {
         color: theme.colors.text,
@@ -104,5 +126,5 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: theme.colors.primary,
         borderRadius: 60
-    }
+    },
 }) 

@@ -1,6 +1,8 @@
 import React from 'react'
-import { View } from 'react-native'
+import { View,LogBox } from 'react-native'
 import Loading from '../components/Loading'
+
+LogBox.ignoreAllLogs(true)
 
 const index = () => {
     return (

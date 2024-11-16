@@ -13,6 +13,7 @@ import Icon from '../../assets/icons'
 import { Image } from 'expo-image'
 import { getAllPosts } from '../../services/postService'
 import PostCard from '../../components/PostCard'
+import { getUserData } from '../../services/userService'
 
 let limit = 0
 
@@ -51,17 +52,40 @@ const Home = () => {
         }, [backPressCount])
     )
 
-    useEffect(() => {
-        const fetchPosts = async () => {
-            limit = limit + 10
-            const res = await getAllPosts(limit)
+    const fetchPosts = async () => {
+        limit = limit + 10
+        const res = await getAllPosts(limit)
+        if (res.success) {
+            setPosts(res.data)
+        } else {
+            Alert.alert(res.error)
+        }
+    }
+
+    const handlePostEnent = async (payload) => {
+        if (payload.eventType === "INSERT" && payload?.new?.id) {
+            let newPost = { ...payload.new }
+            let res = await getUserData(newPost.userId)
             if (res.success) {
-                setPosts(res.data)
+                newPost.user = res.data
             } else {
                 Alert.alert(res.error)
             }
+            setPosts([newPost, ...posts])
         }
+    }
+
+    useEffect(() => {
+        const supabaseChanel = supabase
+            .channel('posts')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, handlePostEnent)
+            .subscribe()
+
         fetchPosts()
+
+        return () => {
+            supabase.removeChannel(supabaseChanel)
+        }
     }, [])
 
     return (

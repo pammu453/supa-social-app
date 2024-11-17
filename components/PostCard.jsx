@@ -35,7 +35,7 @@ const PostCard = ({ item }) => {
         if (liked) {
             const res = await deleteLike(user?.id, postId)
             if (res.success) {
-                const filteredLikes = likes.filter((like) => like.postId !== postId)
+                const filteredLikes = likes.filter((like) => like.userId !== user?.id)
                 setLikes(filteredLikes)
             }
         } else {

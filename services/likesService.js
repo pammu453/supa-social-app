@@ -1,11 +1,10 @@
 import { supabase } from "../lib/supabase"
 
-export const addNewPost = async (form) => {
-    console.log("form", form)
+export const addNewLike = async (likeData) => {
     try {
         const { data, error } = await supabase
-            .from('posts')
-            .upsert(form)
+            .from('postLikes')
+            .upsert(likeData)
             .select()
             .single()
 
@@ -20,17 +19,14 @@ export const addNewPost = async (form) => {
     }
 }
 
-export const getAllPosts = async (limit = 10) => {
+export const deleteLike = async (userId, postId) => {
     try {
         const { data, error } = await supabase
-            .from('posts')
-            .select(`
-                *,
-                user: users (id,name,email,image),
-                postLikes(*)
-            `)
-            .order('created_at', { ascending: false })
-            .limit(limit)
+            .from('postLikes')
+            .delete()
+            .eq("userId", userId)
+            .eq("postId", postId)
+            .select()
 
         if (error) {
             return { success: false, error: error.message }

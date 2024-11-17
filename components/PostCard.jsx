@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { hp, wp } from '../helpers/commen';
 import { Image } from 'react-native';
 import { Video } from 'expo-av';
@@ -8,9 +8,13 @@ import moment from 'moment';
 import Icon from '../assets/icons';
 import { useWindowDimensions } from 'react-native';
 import RenderHTML from 'react-native-render-html';
+import { addNewLike, deleteLike } from '../services/likesService';
+import { useAuth } from '../context/AuthContext';
 
 const PostCard = ({ item }) => {
     const { width } = useWindowDimensions();
+    const { user } = useAuth()
+    const [likes, setLikes] = useState([]);
 
     const imageExtensions = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'];
     const videoExtensions = ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv'];
@@ -25,8 +29,28 @@ const PostCard = ({ item }) => {
 
     const fileType = item?.file ? getFileType(item.file) : null;
 
-    let liked = false
-    let likes = []
+    let liked = likes?.filter((like) => like.userId === user?.id)[0]
+
+    const handleLikes = async (postId) => {
+        if (liked) {
+            const res = await deleteLike(user?.id, postId)
+            if (res.success) {
+                const filteredLikes = likes.filter((like) => like.postId !== postId)
+                setLikes(filteredLikes)
+            }
+        } else {
+            const res = await addNewLike({ userId: user?.id, postId })
+            if (res.success) {
+                setLikes([...likes, res.data])
+            } else {
+                Alert.alert(res.error)
+            }
+        }
+    }
+
+    useEffect(() => {
+        setLikes(item?.postLikes)
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -82,7 +106,7 @@ const PostCard = ({ item }) => {
 
             <View style={styles.footer}>
                 <View style={styles.footerButton}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleLikes(item.id)}>
                         <Icon name="heart" color={liked ? theme.colors.rose : theme.colors.textLight} size={24} fill={liked ? theme.colors.rose : "white"} />
                     </TouchableOpacity>
                     <Text style={styles.count}>{likes?.length}</Text>

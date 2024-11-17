@@ -44,7 +44,6 @@ const Home = () => {
     const fetchPosts = async () => {
         if (!hasMore) return null
         limit = limit + 5
-        console.log("Fetched posts", limit)
         const res = await getAllPosts(limit)
         if (res.success) {
             if (posts.length === res.data.length) setHasMore(false)
@@ -108,7 +107,6 @@ const Home = () => {
                         renderItem={({ item }) => <PostCard item={item} />}
                         onEndReached={() => {
                             fetchPosts()
-                            console.log("end")
                         }}
                         onEndReachedThreshold={0}
                         ListFooterComponent={(

@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Alert, ToastAndroid } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View, TextInput, Alert, ToastAndroid } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ScreenWrapper from '../../components/ScreenWrapper'
 import BackButton from '../../components/BackButton'

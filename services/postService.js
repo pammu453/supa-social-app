@@ -1,7 +1,6 @@
 import { supabase } from "../lib/supabase"
 
 export const addNewPost = async (form) => {
-    console.log("form", form)
     try {
         const { data, error } = await supabase
             .from('posts')

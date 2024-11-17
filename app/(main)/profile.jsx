@@ -2,7 +2,7 @@ import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-na
 import React from 'react'
 import ScreenWrapper from '../../components/ScreenWrapper'
 import { useAuth } from '../../context/AuthContext'
-import { router, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import Header from '../../components/Header'
 import Icon from '../../assets/icons'
 import { theme } from '../../constants/theme'
@@ -15,7 +15,6 @@ const Profile = () => {
     const router = useRouter()
 
     const onLogout = async () => {
-        console.log("Cliked")
         const { error } = await supabase.auth.signOut()
         if (error) {
             Alert.alert(error.message)

@@ -10,11 +10,15 @@ import { useWindowDimensions } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { addNewLike, deleteLike } from '../services/likesService';
 import { useAuth } from '../context/AuthContext';
+import { downloadFile } from '../helpers/downloadFile';
+import * as Sharing from 'expo-sharing';
+import Loading from './Loading';
 
 const PostCard = ({ item }) => {
     const { width } = useWindowDimensions();
     const { user } = useAuth()
     const [likes, setLikes] = useState([]);
+    const [downloadingFile, setDownloadingFile] = useState(false);
 
     const imageExtensions = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'];
     const videoExtensions = ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv'];
@@ -51,6 +55,18 @@ const PostCard = ({ item }) => {
     useEffect(() => {
         setLikes(item?.postLikes)
     }, [])
+
+    const shareHandler = async () => {
+        setDownloadingFile(true)
+        try {
+            const url = await downloadFile(item.file);
+            await Sharing.shareAsync(url);
+        } catch (error) {
+            Alert.alert("An error occurred while sharing the post.");
+        } finally {
+            setDownloadingFile(false)
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -118,8 +134,8 @@ const PostCard = ({ item }) => {
                     <Text style={styles.count}>{likes?.length}</Text>
                 </View>
                 <View style={styles.footerButton}>
-                    <TouchableOpacity>
-                        <Icon name="share" size={24} />
+                    <TouchableOpacity onPress={shareHandler}>
+                        {downloadingFile ? <Loading size="small" /> : <Icon name="share" size={24} />}
                     </TouchableOpacity>
                 </View>
             </View>

@@ -13,8 +13,9 @@ import { useAuth } from '../context/AuthContext';
 import { downloadFile } from '../helpers/downloadFile';
 import * as Sharing from 'expo-sharing';
 import Loading from './Loading';
+import { router } from 'expo-router';
 
-const PostCard = ({ item }) => {
+const PostCard = ({ item, hasShown = true }) => {
     const { width } = useWindowDimensions();
     const { user } = useAuth()
     const [likes, setLikes] = useState([]);
@@ -54,7 +55,7 @@ const PostCard = ({ item }) => {
 
     useEffect(() => {
         setLikes(item?.postLikes)
-    }, [])
+    }, [item])
 
     const shareHandler = async () => {
         setDownloadingFile(true)
@@ -67,6 +68,11 @@ const PostCard = ({ item }) => {
             setDownloadingFile(false)
         }
     };
+
+    const handleComment = () => {
+        if (!hasShown) return null
+        router.push({ pathname: "postDetails", params: { postId: item.id } })
+    }
 
     return (
         <View style={styles.container}>
@@ -87,9 +93,13 @@ const PostCard = ({ item }) => {
                         <Text style={styles.address}>{moment(item?.created_at).fromNow()}</Text>
                     </View>
                 </View>
-                <View>
-                    <Icon name='threeDotsHorizontal' size={35} strokeWidth={3} style={styles.rotateIcon} />
-                </View>
+                {
+                    hasShown && (
+                        <TouchableOpacity onPress={handleComment}>
+                            <Icon name='threeDotsHorizontal' size={35} strokeWidth={3} style={styles.rotateIcon} />
+                        </TouchableOpacity>
+                    )
+                }
             </View>
 
             {item && item.body && (
@@ -128,10 +138,10 @@ const PostCard = ({ item }) => {
                     <Text style={styles.count}>{likes?.length}</Text>
                 </View>
                 <View style={styles.footerButton}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleComment}>
                         <Icon name="comment" size={24} />
                     </TouchableOpacity>
-                    <Text style={styles.count}>{likes?.length}</Text>
+                    <Text style={styles.count}>{item?.comments.length}</Text>
                 </View>
                 <View style={styles.footerButton}>
                     <TouchableOpacity onPress={shareHandler}>

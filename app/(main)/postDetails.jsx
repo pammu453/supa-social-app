@@ -25,17 +25,17 @@ const postDetails = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const res = await getPostDetails(postId)
-            if (res.success) setPost(res.data)
-            else Alert.alert(res.error)
-            setLoading(false)
-        }
-        fetchData()
-    }, [postId])
-
-    useEffect(() => {
-        setComments(post.comments)
-    }, [post])
+            const res = await getPostDetails(postId);
+            if (res.success) {
+                setPost(res.data);
+                setComments(res.data.comments || []);
+            } else {
+                Alert.alert(res.error);
+            }
+            setLoading(false);
+        };
+        fetchData();
+    }, [postId]);
 
     if (loading) {
         return (
@@ -49,8 +49,8 @@ const postDetails = () => {
         setCommentLoading(true)
         const res = await addNewComment({ userId: user?.id, postId, text: comment })
         if (res.success) {
-            console.log(res.data)
             setComments(prev => [{ ...res.data, user: { image: user?.image, name: user?.name } }, ...prev])
+            setComment('');
         } else {
             Alert.alert(res.error)
         }
@@ -72,7 +72,7 @@ const postDetails = () => {
                 <View style={styles.container}>
                     <PostCard item={post} hasShown={false} />
                     <View style={styles.commentContainer}>
-                        <Input value={comment} onChangeText={text => setComment(text)} placeholder="wtiter something here..." containerStyles={{ flex: 1 }} />
+                        <Input value={comment} onChangeText={text => setComment(text)} placeholder="Write something here..." containerStyles={{ flex: 1 }} />
                         <TouchableOpacity onPress={handleComment} style={styles.buttonContainer}>
                             {
                                 commentLoading ?

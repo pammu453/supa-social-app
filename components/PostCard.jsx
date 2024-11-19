@@ -135,13 +135,13 @@ const PostCard = ({ item, hasShown = true }) => {
                     <TouchableOpacity onPress={() => handleLikes(item.id)}>
                         <Icon name="heart" color={liked ? theme.colors.rose : theme.colors.textLight} size={24} fill={liked ? theme.colors.rose : "white"} />
                     </TouchableOpacity>
-                    <Text style={styles.count}>{likes?.length}</Text>
+                    <Text style={styles.count}>{likes?.length || 0}</Text>
                 </View>
                 <View style={styles.footerButton}>
                     <TouchableOpacity onPress={handleComment}>
                         <Icon name="comment" size={24} />
                     </TouchableOpacity>
-                    <Text style={styles.count}>{item?.comments.length}</Text>
+                    <Text style={styles.count}>{item?.comments?.length || 0}</Text>
                 </View>
                 <View style={styles.footerButton}>
                     <TouchableOpacity onPress={shareHandler}>

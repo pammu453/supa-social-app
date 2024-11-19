@@ -30,7 +30,7 @@ export const getAllPosts = async (limit = 10) => {
                 comments(id)
             `)
             .order('created_at', { ascending: false })
-            .limit(1)
+            .limit(limit)
 
         if (error) {
             return { success: false, error: error.message }

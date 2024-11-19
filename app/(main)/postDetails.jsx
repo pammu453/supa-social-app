@@ -13,6 +13,8 @@ import { addNewComment, deleteComment } from '../../services/commentService'
 import { useAuth } from '../../context/AuthContext'
 import { Image } from 'expo-image'
 import moment from 'moment'
+import { supabase } from '../../lib/supabase'
+import { getUserData } from '../../services/userService'
 
 const postDetails = () => {
     const { user } = useAuth()
@@ -37,6 +39,47 @@ const postDetails = () => {
         fetchData();
     }, [postId]);
 
+    useEffect(() => {
+        const commentSubscription = supabase
+            .channel('comments')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'comments',
+                    // filter: `postId=eq.${postId}`
+                },
+                async (payload) => {
+                    if (payload.eventType === 'INSERT') {
+                        let newComment = { ...payload.new }
+                        const res = await getUserData(payload.new.userId)
+                        if (res.success) {
+                            newComment.user = res.data
+                        }
+                        setPost(prevPost => ({
+                            ...prevPost,
+                            comments: [newComment, ...prevPost.comments]
+                        }))
+                        setComments(prevComments => [newComment, ...prevComments])
+                    } else if (payload.eventType === 'DELETE') {
+                        setPost(prevPost => ({
+                            ...prevPost,
+                            comments: prevPost.comments.filter((comment) => comment.id !== payload.old.id)
+                        }))
+                        setComments((prevComments) =>
+                            prevComments.filter((comment) => comment.id !== payload.old.id)
+                        );
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(commentSubscription);
+        };
+    }, []);
+
     if (loading) {
         return (
             <View style={styles.loading}>
@@ -48,22 +91,15 @@ const postDetails = () => {
     const handleComment = async () => {
         setCommentLoading(true)
         const res = await addNewComment({ userId: user?.id, postId, text: comment })
-        if (res.success) {
-            setComments(prev => [{ ...res.data, user: { image: user?.image, name: user?.name } }, ...prev])
-            setComment('');
-        } else {
-            Alert.alert(res.error)
-        }
+        if (res.success) setComment('');
+        else Alert.alert(res.error)
         setCommentLoading(false)
     }
 
     const deleteCommentHandler = async (commentId) => {
         const res = await deleteComment(commentId)
-        if (res.success) {
-            setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId))
-        } else {
-            Alert.alert(res.error)
-        }
+        if (res.success) return
+        else Alert.alert(res.error)
     }
 
     return (

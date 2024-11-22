@@ -14,8 +14,9 @@ import { downloadFile } from '../helpers/downloadFile';
 import * as Sharing from 'expo-sharing';
 import Loading from './Loading';
 import { router } from 'expo-router';
+import EditDelete from './EditDelete';
 
-const PostCard = ({ item, hasShown = true }) => {
+const PostCard = ({ item, hasShown = true, editDeleteShown = false,setPosts }) => {
     const { width } = useWindowDimensions();
     const { user } = useAuth()
     const [likes, setLikes] = useState([]);
@@ -100,6 +101,7 @@ const PostCard = ({ item, hasShown = true }) => {
                         </TouchableOpacity>
                     )
                 }
+                {editDeleteShown && <EditDelete item={item} setPosts={setPosts}/>}
             </View>
 
             {item && item.body && (

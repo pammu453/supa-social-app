@@ -91,6 +91,9 @@ const Home = () => {
                         <TouchableOpacity onPress={() => router.push("newPost")}>
                             <Icon name="plus" size={hp(3.2)} strokeWidth={2} color={theme.colors.text} />
                         </TouchableOpacity>
+                        <TouchableOpacity onPress={() => router.push("list")}>
+                            <Icon name="list" size={hp(3.2)} strokeWidth={2} color={theme.colors.text} />
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={() => router.push("profile")}>
                             <Image
                                 source={user?.image ? { uri: user.image } : require("../../assets/images/defaultUser.png")}

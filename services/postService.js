@@ -67,3 +67,46 @@ export const getPostDetails = async (postId) => {
         return { success: false, error: error.message }
     }
 }
+
+export const getUserPosts = async (userId) => {
+    try {
+        const { data, error } = await supabase
+            .from('posts')
+            .select(`
+                *,
+                user: users (id,name,email,image),
+                postLikes(*),
+                comments(id)
+            `)
+            .eq("userId", userId)
+            .order('created_at', { ascending: false })
+
+        if (error) {
+            return { success: false, error: error.message }
+        }
+
+        return { success: true, data }
+
+    } catch (error) {
+        return { success: false, error: error.message }
+    }
+}
+
+export const deletePost = async (postId) => {
+    try {
+        const { data, error } = await supabase
+            .from('posts')
+            .delete()
+            .eq('id', postId)
+            .select()
+
+        if (error) {
+            return { success: false, error: error.message }
+        }
+
+        return { success: true, data }
+
+    } catch (error) {
+        return { success: false, error: error.message }
+    }
+}

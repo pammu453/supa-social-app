@@ -22,6 +22,7 @@ import Image from './Image';
 import Video from './Video';
 import StarIcon from './Star';
 import { theme } from '../../constants/theme';
+import ListIcon from './List';
 
 const icons = {
   home: Home,
@@ -45,7 +46,8 @@ const icons = {
   logout: Logout,
   image: Image,
   video: Video,
-  star:StarIcon
+  star: StarIcon,
+  list: ListIcon
 }
 
 const Icon = ({ name, ...props }) => {

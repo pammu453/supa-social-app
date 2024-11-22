@@ -56,7 +56,7 @@ const NewPost = () => {
             setEditorData('')
             richText.current.setContentHTML = ''
             setFile(null)
-            router.back()
+            router.push("home")
         }
 
         setLoading(false)

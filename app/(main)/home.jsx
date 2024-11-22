@@ -64,6 +64,9 @@ const Home = () => {
             }
             setPosts([newPost, ...posts])
         }
+        if (payload.eventType === "DELETE" && payload?.old?.id) {
+            setPosts(posts.filter(post => post.id !== payload.old.id))
+        }
     }
 
     useEffect(() => {

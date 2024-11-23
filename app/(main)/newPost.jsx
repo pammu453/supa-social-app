@@ -41,7 +41,7 @@ const NewPost = () => {
 
     useEffect(() => {
         if (isUpdate) {
-            setEditorData(body); 
+            setEditorData(body);
             setFile({ uri: url, type: fileType });
         }
     }, [id])
@@ -80,8 +80,8 @@ const NewPost = () => {
 
         const postData = { file: fileUrl, body: editorData, userId: user.id };
         const res2 = isUpdate
-            ? await updatePost(id, postData) 
-            : await addNewPost(postData); 
+            ? await updatePost(id, postData)
+            : await addNewPost(postData);
         if (res2.success) {
             setEditorData('')
             richText.current.setContentHTML = ''
@@ -96,7 +96,7 @@ const NewPost = () => {
         <ScreenWrapper >
             <ScrollView>
                 <View style={styles.container}>
-                    <Header title="New Post" showBackButton={true} />
+                    <Header title={isUpdate ? "Update post" : "New Post"} showBackButton={true} />
                     <View style={styles.profileContainer}>
                         <Image source={user && user.image ? { uri: user.image } : require('../../assets/images/defaultUser.png')} contentFit='contain' style={styles.image} />
                         <View>
@@ -134,7 +134,7 @@ const NewPost = () => {
                     </View>
                 </View>
             </ScrollView>
-            <Button title='Add new post' onPress={handleSubmit} buttonStyle={{ margin: wp(4) }} loading={loading} />
+            <Button title={isUpdate ? 'Update post' : 'Add new post'} onPress={handleSubmit} buttonStyle={{ margin: wp(4) }} loading={loading} />
         </ScreenWrapper>
     )
 }

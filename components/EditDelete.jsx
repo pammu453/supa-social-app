@@ -2,8 +2,10 @@ import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
 import Icon from '../assets/icons'
 import { deletePost } from '../services/postService'
+import { useRouter } from 'expo-router'
 
 const EditDelete = ({ item, setPosts }) => {
+    const router = useRouter()
 
     const handleDelete = async () => {
         Alert.alert(
@@ -20,7 +22,6 @@ const EditDelete = ({ item, setPosts }) => {
                         const res = await deletePost(item.id)
                         if (res.success) {
                             setPosts(prevPosts => prevPosts.filter(post => post.id !== item.id))
-                            console.log("Deletd")
                         }
                         else Alert.alert(res.error)
                     }
@@ -29,7 +30,10 @@ const EditDelete = ({ item, setPosts }) => {
         )
     }
 
-    const handleEdit = async () => { }
+    const handleEdit = async () => {
+        router.push({ pathname: "newPost", params: { id: item.id, body: item.body, file:item.file} })
+    }
+
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={handleDelete}>

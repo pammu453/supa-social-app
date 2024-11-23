@@ -110,3 +110,21 @@ export const deletePost = async (postId) => {
         return { success: false, error: error.message }
     }
 }
+
+export const updatePost = async (id, form) => {
+    try {
+        const { data, error } = await supabase
+            .from('posts')
+            .update(form)
+            .eq('id', id)
+
+        if (error) {
+            return { success: false, error: error.message }
+        }
+
+        return { success: true, data }
+
+    } catch (error) {
+        return { success: false, error: error.message }
+    }
+}

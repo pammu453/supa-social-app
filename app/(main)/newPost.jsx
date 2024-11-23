@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ScreenWrapper from '../../components/ScreenWrapper'
 import Header from '../../components/Header'
 import { hp, wp } from '../../helpers/commen'
@@ -13,8 +13,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { Video, ResizeMode } from 'expo-av'
 import { Alert } from 'react-native'
 import { uploadUserImage } from '../../services/imageService'
-import { addNewPost } from '../../services/postService'
-import { useRouter } from 'expo-router'
+import { addNewPost, updatePost } from '../../services/postService'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 
 const NewPost = () => {
     const richText = React.useRef();
@@ -23,6 +23,28 @@ const NewPost = () => {
     const [loading, setLoading] = useState(false);
     const [editorData, setEditorData] = useState(null);
     const [file, setFile] = useState(null);
+
+    const { id, body, file: url } = useLocalSearchParams()
+    const isUpdate = !!id; // Determine if it's an update or a new post
+    const imageExtensions = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'];
+    const videoExtensions = ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv'];
+
+    // Function to check file type
+    const getFileType = (fileUrl) => {
+        const extension = fileUrl.split('.').pop().toLowerCase();
+        if (imageExtensions.includes(extension)) return 'image';
+        if (videoExtensions.includes(extension)) return 'video';
+        return 'unknown';
+    };
+
+    const fileType = url ? getFileType(url) : null;
+
+    useEffect(() => {
+        if (isUpdate) {
+            setEditorData(body); 
+            setFile({ uri: url, type: fileType });
+        }
+    }, [id])
 
     const onPick = async (fileType) => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -48,10 +70,18 @@ const NewPost = () => {
         }
         setLoading(true)
 
-        const res = await uploadUserImage(user.id, file)
-        const url = res.data
+        let fileUrl;
+        if (file?.uri && file.uri.startsWith('http')) {
+            fileUrl = file.uri;
+        } else if (file) {
+            const res = await uploadUserImage(user.id, file);
+            fileUrl = res.data;
+        }
 
-        const res2 = await addNewPost({ file: url, body: editorData, userId: user.id })
+        const postData = { file: fileUrl, body: editorData, userId: user.id };
+        const res2 = isUpdate
+            ? await updatePost(id, postData) 
+            : await addNewPost(postData); 
         if (res2.success) {
             setEditorData('')
             richText.current.setContentHTML = ''

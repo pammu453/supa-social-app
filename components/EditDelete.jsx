@@ -31,7 +31,7 @@ const EditDelete = ({ item, setPosts }) => {
     }
 
     const handleEdit = async () => {
-        router.push({ pathname: "newPost", params: { id: item.id, body: item.body, file:item.file} })
+        router.push({ pathname: "newPost", params: { id: item.id, body: item.body, file: item.file } })
     }
 
     return (

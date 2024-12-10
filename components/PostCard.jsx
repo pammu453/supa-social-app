@@ -16,7 +16,7 @@ import Loading from './Loading';
 import { router } from 'expo-router';
 import EditDelete from './EditDelete';
 
-const PostCard = ({ item, hasShown = true, editDeleteShown = false,setPosts }) => {
+const PostCard = ({ item, hasShown = true, editDeleteShown = false, setPosts }) => {
     const { width } = useWindowDimensions();
     const { user } = useAuth()
     const [likes, setLikes] = useState([]);
@@ -101,7 +101,7 @@ const PostCard = ({ item, hasShown = true, editDeleteShown = false,setPosts }) =
                         </TouchableOpacity>
                     )
                 }
-                {editDeleteShown && <EditDelete item={item} setPosts={setPosts}/>}
+                {editDeleteShown && <EditDelete item={item} setPosts={setPosts} />}
             </View>
 
             {item && item.body && (

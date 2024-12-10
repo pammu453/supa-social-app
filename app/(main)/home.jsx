@@ -75,8 +75,6 @@ const Home = () => {
             .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, handlePostEnent)
             .subscribe()
 
-        // fetchPosts()
-
         return () => {
             supabase.removeChannel(supabaseChanel)
         }
@@ -88,9 +86,6 @@ const Home = () => {
                 <View style={styles.header}>
                     <Text style={styles.title}>ExploreIt!</Text>
                     <View style={styles.icons}>
-                        <TouchableOpacity onPress={() => router.push("notifications")}>
-                            <Icon name="heart" size={hp(3.2)} strokeWidth={2} color={theme.colors.text} />
-                        </TouchableOpacity>
                         <TouchableOpacity onPress={() => router.push("newPost")}>
                             <Icon name="plus" size={hp(3.2)} strokeWidth={2} color={theme.colors.text} />
                         </TouchableOpacity>

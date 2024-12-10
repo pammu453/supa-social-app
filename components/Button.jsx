@@ -14,7 +14,7 @@ const Button = ({ buttonStyle, textSyle, title = '', onPress, loading = false, h
         elevation: 8
     }
 
-    const loadingStyle={
+    const loadingStyle = {
         backgroundColor: theme.colors.secondary
     }
 
@@ -23,10 +23,10 @@ const Button = ({ buttonStyle, textSyle, title = '', onPress, loading = false, h
     </View>
 
     return (
-        <TouchableOpacity 
-        onPress={onPress} 
-        style={[styles.button, buttonStyle, hasShadow && shadowStyle,loading && loadingStyle]}
-        disabled={loading}
+        <TouchableOpacity
+            onPress={onPress}
+            style={[styles.button, buttonStyle, hasShadow && shadowStyle, loading && loadingStyle]}
+            disabled={loading}
         >
             <Text style={[styles.text, textSyle]}>{title}</Text>
         </TouchableOpacity>

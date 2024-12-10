@@ -86,7 +86,7 @@ const SignUp = () => {
 
                     <View style={styles.formText}>
                         <Text>Already have an account?</Text>
-                        <TouchableOpacity  onPress={() => router.push("sign-in")}>
+                        <TouchableOpacity onPress={() => router.push("sign-in")}>
                             <Text style={{ color: theme.colors.primary }}>SignIn</Text>
                         </TouchableOpacity>
                     </View>

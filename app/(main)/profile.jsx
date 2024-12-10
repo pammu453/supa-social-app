@@ -76,7 +76,7 @@ const UserHeader = ({ user, router, onLogout }) => {
                         <Text style={styles.username}>{user && user.name}</Text>
                         <View style={{ flexDirection: "row", gap: 2 }}>
                             <Icon name='location' size={20} />
-                            <Text style={styles.infoText}>{user ? user.address : " Not available"}</Text>
+                            <Text style={styles.infoText}>{user && user.address ? user.address : " Not available"}</Text>
                         </View>
                     </View>
 
@@ -88,7 +88,7 @@ const UserHeader = ({ user, router, onLogout }) => {
                         <View style={styles.info}>
                             <Icon name='call' size={20} color={theme.colors.textLight} />
                             {
-                                user && user.phoneNumber ? <Text style={styles.infoTextLeftAligned}>{user && user.email}</Text> : <Text style={styles.infoTextLeftAligned}>Not availbale</Text>
+                                user && user.phoneNumber ? <Text style={styles.infoTextLeftAligned}>{user && user.phoneNumber}</Text> : <Text style={styles.infoTextLeftAligned}>Not availbale</Text>
                             }
                         </View>
                         <View style={styles.info}>
